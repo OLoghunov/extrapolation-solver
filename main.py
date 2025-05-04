@@ -21,12 +21,6 @@ for name, solver in solvers.items():
     y_exact = exact_linear(t)
     error = np.max(np.abs(y - y_exact))
     print(f"{name}: error = {error:.2e}")
-    
-    plt.loglog(t, np.abs(y - y_exact), 'o-', label='ESIMM')
-    plt.xlabel('Step (h)')
-    plt.ylabel('Error')
-    plt.legend()
-    plt.show()
 
 h_list = [0.1, 0.05, 0.025]
 
@@ -47,7 +41,6 @@ order_esimm = estimate_order(
 )
 
 print(f"ESIMM order of accuracy: {order_esimm:.2f}")
-
 
 plt.loglog(t, np.abs(y - y_exact), 'o-', label='ESIMM')
 plt.xlabel('Step (h)')
