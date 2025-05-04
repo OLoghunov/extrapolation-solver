@@ -1,7 +1,9 @@
 import numpy as np
 
-def compute_error(y_num, y_exact):
+def compute_error(y_num, y_exact, per_component=False):
     """Calculates maximum absolute error."""
+    if per_component:
+        return np.max(np.abs(y_num - y_exact), axis=0)
     return np.max(np.abs(y_num - y_exact))
 
 def estimate_order(f, t_span, y0, exact_solution, solver, h_list, **solver_kwargs):
