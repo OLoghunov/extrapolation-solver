@@ -7,7 +7,7 @@ class AdamsBashforth2(BaseODESolver):
     
     def solve(self):
         t = np.arange(self.t0, self.tf + self.h, self.h)
-        y = np.zeros(len(t))
+        y = np.zeros((len(t), len(self.y0)))
         y[0] = self.y0
         
         rk_solver = RungeKutta2(self.f, [t[0], t[1]], y[0], h=self.h)
@@ -26,7 +26,7 @@ class AdamsBashforth4(BaseODESolver):
     
     def solve(self):
         t = np.arange(self.t0, self.tf + self.h, self.h)
-        y = np.zeros(len(t))
+        y = np.zeros((len(t), len(self.y0)))
         y[0] = self.y0
         
         rk_solver = RungeKutta4(self.f, t[:4], y[0], h=self.h)

@@ -6,7 +6,7 @@ class RungeKutta4(BaseODESolver):
     
     def solve(self):
         t = np.arange(self.t0, self.tf + self.h, self.h)
-        y = np.zeros(len(t))
+        y = np.zeros((len(t), len(self.y0)))
         y[0] = self.y0
         
         for i in range(len(t) - 1):
@@ -24,7 +24,7 @@ class RungeKutta2(BaseODESolver):
     
     def solve(self):
         t = np.arange(self.t0, self.tf + self.h, self.h)
-        y = np.zeros(len(t))
+        y = np.zeros((len(t), len(self.y0)))
         y[0] = self.y0
         
         for i in range(len(t) - 1):
