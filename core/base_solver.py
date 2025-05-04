@@ -1,3 +1,4 @@
+import numpy as np
 from abc import ABC, abstractmethod
 
 class BaseODESolver(ABC):
@@ -12,7 +13,7 @@ class BaseODESolver(ABC):
         """
         self.f = f
         self.t_span = t_span
-        self.y0 = y0
+        self.y0 = np.atleast_1d(y0)
         self.t0, self.tf = t_span[0], t_span[-1]
         self.h = h if h is not None else (t_span[1] - t_span[0])
         
