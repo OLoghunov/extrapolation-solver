@@ -8,7 +8,7 @@ from visualization import plot_errors
 # Config
 h_list = [0.4, 0.2, 0.1, 0.05]
 extrapolation_seq = [1, 2, 4]
-problem = benchmarks["nonlinear"]
+problem = benchmarks["lorenz"]
 
 ode = problem["ode"]
 exact = problem["exact"]
