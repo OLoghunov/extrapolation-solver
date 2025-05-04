@@ -1,49 +1,46 @@
 import numpy as np
 from core.runge_kutta import RungeKutta4
 from core.esimm_solver import ESIMMSolver
-from accuracy.benchmarks import linear_ode, exact_linear
-from accuracy.error_estimator import estimate_order
-import matplotlib.pyplot as plt
+from accuracy.error_estimator import compute_error, estimate_order
+from accuracy.benchmarks import benchmarks
+from visualization import plot_errors
 
-t_span = [0, 1]
-y0 = 1
-h = 0.1
+# Config
+h_list = [0.4, 0.2, 0.1, 0.05]
+extrapolation_seq = [1, 2, 4]
+problem = benchmarks["nonlinear"]
 
-solvers = {
-    "RK4": RungeKutta4(linear_ode, t_span, y0, h),
-    "ESIMM": ESIMMSolver(
-        linear_ode, t_span, y0, extrapolation_seq=[1, 2], boot_method="rk4", h=h
-    ),
-}
+ode = problem["ode"]
+exact = problem["exact"]
+y0 = problem["y0"]
+t_span = problem["t_span"]
 
-for name, solver in solvers.items():
+# Error estimation RK4
+rk4_errors = []
+for h in h_list:
+    t_eval = np.arange(t_span[0], t_span[1] + h, h)
+    solver = RungeKutta4(ode, t_eval, y0, h=h)
     t, y = solver.solve()
-    y_exact = exact_linear(t)
-    error = np.max(np.abs(y - y_exact))
-    print(f"{name}: error = {error:.2e}")
+    y_true = exact(t)
+    rk4_errors.append(compute_error(y, y_true))
 
-h_list = [0.1, 0.05, 0.025]
+# Error estimation ESIMM
+esimm_errors = []
+for h in h_list:
+    t_eval = np.arange(t_span[0], t_span[1] + h, h)
+    solver = ESIMMSolver(ode, t_eval, y0, extrapolation_seq, h=h)
+    t, y = solver.solve()
+    y_true = exact(t)
+    esimm_errors.append(compute_error(y, y_true))
 
-esimm_params = {
-    'extrapolation_seq': [1, 2],
-    'boot_method': 'rk4',
-    'multistep_method': 'ab2'
-}
-
-order_esimm = estimate_order(
-    linear_ode,
-    t_span,
-    y0,
-    exact_linear,
-    solver=ESIMMSolver,
-    h_list=h_list,
-    **esimm_params,
+# ESIMM order estimation
+esimm_order = estimate_order(
+    ode, t_span, y0, exact, 
+    ESIMMSolver, h_list,
+    extrapolation_seq=extrapolation_seq
 )
 
-print(f"ESIMM order of accuracy: {order_esimm:.2f}")
+print(f"ESIMM estimated order: {esimm_order:.2f}")
 
-plt.loglog(t, np.abs(y - y_exact), 'o-', label='ESIMM')
-plt.xlabel('Step (h)')
-plt.ylabel('Error')
-plt.legend()
-plt.show()
+# Plot
+plot_errors(h_list, rk4_errors, esimm_errors)
