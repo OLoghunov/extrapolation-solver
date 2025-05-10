@@ -22,14 +22,15 @@ class ESIMMSolver(BaseODESolver):
             case _:
                 raise ValueError(f"Unknown boot method: {method}")
 
-    def _init_multistepper(self, method, h, t_eval):
+    def _init_multistepper(self, method, h, t_eval, y_boot):
         match method.lower():
             case 'ab2':
-                return AdamsBashforth2(self.f, t_eval, self.y0, h)
+                return AdamsBashforth2(self.f, t_eval, y_boot)
             case 'ab4':
-                return AdamsBashforth4(self.f, t_eval, self.y0, h)
+                return AdamsBashforth4(self.f, t_eval, y_boot)
             case _:
                 raise ValueError(f"Unknown multistep method: {method}")
+
 
     def _get_method_order(self):
         match self.multistep_method.lower():
@@ -63,18 +64,18 @@ class ESIMMSolver(BaseODESolver):
             h_eff = self.h / n
             t_eval = np.arange(self.t_span[0], self.t_span[1] + h_eff, h_eff)
 
-            # Runge-Kutta для бутстрапа
+            # Runge-Kutta for bootstrap
             boot = self._init_bootstrapper(self.boot_method, h_eff, t_eval)
-            t_boot, y_boot = boot.solve()
+            _, y_boot = boot.solve()
 
-            # Мультишаговый метод
-            multistep = self._init_multistepper(self.multistep_method, h_eff, t_eval)
+            # Multistep method
+            multistep = self._init_multistepper(self.multistep_method, h_eff, t_eval, y_boot)
             t_full, y_full = multistep.solve()
 
             if t_common is None:
                 t_common = np.linspace(self.t_span[0], self.t_span[1], len(t_full))  # фиксированное количество точек
 
-            # Интерполяция решения на t_common
+            # Interpolation on t_common
             interp_func = interp1d(t_full, y_full, axis=0, kind='linear', fill_value="extrapolate")
             y_interp = interp_func(t_common)
             solutions.append(y_interp)
