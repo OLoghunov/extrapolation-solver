@@ -8,10 +8,10 @@ def exact_linear(t):
     return np.exp(-t)
 
 def nonlinear_ode(t, y):
-    return 1 / (2 - y)
+    return y * (1 - y)
 
 def exact_nonlinear(t):
-    return t**2
+    return 1 / (1 + np.exp(-t))
 
 def lorenz_system(t, y, sigma=10, rho=28, beta=8/3):
     dydt = np.zeros(3)
@@ -44,8 +44,8 @@ benchmarks = {
     "nonlinear": {
         "ode": nonlinear_ode,
         "exact": exact_nonlinear,
-        "y0": 1.0,
-        "t_span": [0.0, 1.5]
+        "y0": 0.5,
+        "t_span": [0.0, 5.0]
     },
     "lorenz": {
         "ode": lorenz_system,
