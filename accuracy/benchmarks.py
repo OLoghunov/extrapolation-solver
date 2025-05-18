@@ -21,7 +21,7 @@ def lorenz_system(t, y, sigma=10, rho=28, beta=8/3):
     return dydt
 
 # Config for Lorenz system
-t_span = (0.0, 0.5)
+t_span = (0.0, 5.0)
 y0 = np.array([1.0, 1.0, 1.0])
 
 # "Pseudo-accurate" solution of the Lorentz system obtained by RK4 with a very small step
