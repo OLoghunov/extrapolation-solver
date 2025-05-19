@@ -31,7 +31,6 @@ class ESIMMSolver(BaseODESolver):
             case _:
                 raise ValueError(f"Unknown multistep method: {method}")
 
-
     def _get_method_order(self):
         match self.multistep_method.lower():
             case 'ab2':
@@ -73,7 +72,7 @@ class ESIMMSolver(BaseODESolver):
             t_full, y_full = multistep.solve()
 
             if t_common is None:
-                t_common = np.linspace(self.t_span[0], self.t_span[1], len(t_full))  # фиксированное количество точек
+                t_common = np.linspace(self.t_span[0], self.t_span[1], len(t_full)) 
 
             # Interpolation on t_common
             interp_func = interp1d(t_full, y_full, axis=0, kind='linear', fill_value="extrapolate")
